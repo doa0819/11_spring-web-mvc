@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.WebRequest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 
 @Controller
@@ -190,5 +192,24 @@ public class FirstController {
         sessionStatus.setComplete();
 
         return "first/loginResult";
+    }
+
+
+    @GetMapping("body")     //void 는 /first/body 라는 걸 페이지로 바로 볼수 있다.
+    public void body(){}
+
+    @PostMapping("body")
+    /* @RequestBody
+    *   http 본문 자체를 읽는 부분을 모델로 변환시켜 주는 어노테이션
+    *   출력 시 쿼리스트링 형태의 문자열이 전송된다.
+    *   JSON 으로 전달하는 경우 Jackson 의 컨버터로 자동 파싱하여 사용할 수 있다.
+    *
+    *    RestAPI 작성 시 자주 사용되며, 일반적인 form 전송을 할 때는 거의 사용하지 않는다.
+    *   @RequestHeader 헤더에 대한 정보 가져오기
+    * */
+    public void bodyTest(@RequestBody String body, @RequestHeader("content-type") String contentType) throws UnsupportedEncodingException {
+        System.out.println("body = " + body);       // 쿼리스트링 형식으로 값이 넘어옴(사이트에서 넣은 값이 자바로 나옴) => 한글데이터 깨져서 나옴
+        System.out.println("contentType = " + contentType);
+        System.out.println(URLDecoder.decode(body,"UTF-8"));        // 인코딩 방식 바꿔줘서 한글파일 안깨짐
     }
 }
