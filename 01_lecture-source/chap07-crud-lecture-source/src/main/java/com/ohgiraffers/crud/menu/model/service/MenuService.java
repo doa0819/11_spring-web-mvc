@@ -2,7 +2,9 @@ package com.ohgiraffers.crud.menu.model.service;
 
 import com.ohgiraffers.crud.menu.model.dao.MenuMapper;
 import com.ohgiraffers.crud.menu.model.dto.CategoryDTO;
+import com.ohgiraffers.crud.menu.model.dto.MenuAndCategoryDTO;
 import com.ohgiraffers.crud.menu.model.dto.MenuDTO;
+import com.ohgiraffers.crud.menu.model.dto.categoryAndMenuDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,7 @@ public class MenuService {
     *   트렌젝션은 데이터베이스의 상태를 변화시키는 일(작업)을 하나의 단위로 묶는 작업을 의미한다.
     *   데이터 조작에 관련 된 작업이 일어날 때(c,u,d) 메소드 실행이 완료되면 commit,
     *   예외가 발생 하게 되면 rollback
+    *   => 변경 된 값이 db에 저장이 된다.
     * */
     @Transactional
     public void registNewMenu(MenuDTO newMenu) {
@@ -44,4 +47,25 @@ public class MenuService {
         menuMapper.registNewMenu(newMenu);
 
     }
+
+    public List<MenuAndCategoryDTO> findAllMenuAndCategory() {
+
+        return menuMapper.findAllMenuAndCategoryList();
+    }
+
+    @Transactional
+    public void deleteMenuByCode(int code) {
+
+        menuMapper.deleteMenuByCode(code);
+
+    }
+
+    public List<categoryAndMenuDTO> findAllCategoryAndMenu() {
+        return menuMapper.findAllCategoryAndMenuList();
+    }
+
+
+
+
+
 }

@@ -4,6 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ohgiraffers.crud.menu.model.dao.MenuMapper">
 
+    <!--resultMap 으로 묶는 이유 -> 객체와 데이터베이스 간의 매핑을 명확하게 정의하기 위해서 -->
     <resultMap id="menuResultMap" type="com.ohgiraffers.crud.menu.model.dto.MenuDTO">
         <id property="code" column="menu_code"/>
         <result property="name" column="menu_name"/>
@@ -56,5 +57,79 @@
         )
 
     </insert>
+    <resultMap id="menuAndCategoryResultMap" type="com.ohgiraffers.crud.menu.model.dto.MenuAndCategoryDTO">
+        <id property="code" column="menu_code"/>
+        <result property="name" column="menu_name"/>
+        <result property="price" column="menu_price"/>
+        <result property="orderableStatus" column="orderable_status"/>
+        <association property="categoryDTO" javaType="com.ohgiraffers.crud.menu.model.dto.CategoryDTO">
+            <id property="code" column="category_code"/>
+            <result property="name" column="category_name"/>
+            <result property="refCategoryCode" column="ref_category_code"/>
+        </association>
+    </resultMap>
+
+    <!-- association 1:1 join
+         menu - category 둘다 조회 / 연관관계 있는 코드 찾기 => category_code 로 연관이 되어 있음(on 이용해서 연관)
+     -->
+
+    <select id="findAllMenuAndCategoryList" resultMap="menuAndCategoryResultMap">
+        select
+            a.menu_code,
+            a.menu_name,
+            a.menu_price,
+            a.orderable_status,
+            b.category_code,
+            b.category_name,
+            b.ref_category_code
+        from
+            tbl_menu a
+        join
+            tbl_category b on (a.category_code = b.category_code)
+        where
+            a.orderable_status = 'Y'
+
+    </select>
+
+    <resultMap id="categoryAndMenuResultMap" type="com.ohgiraffers.crud.menu.model.dto.categoryAndMenuDTO">
+        <id property="code" column="category_code"/>
+        <result property="name" column="category_name"/>
+        <result property="refCategoryCode" column="ref_category_code"/>
+        <association property="menuDTO" javaType="com.ohgiraffers.crud.menu.model.dto.MenuDTO">
+            <id property="code" column="menu_code"/>
+            <result property="name" column="menu_name"/>
+            <result property="price" column="menu_price"/>
+            <result property="orderableStatus" column="orderable_status"/>
+        </association>
+    </resultMap>
+
+    <select id="findAllCategoryAndMenuList" resultMap="categoryAndMenuResultMap">
+        select
+            a.category_code,
+            a.category_name,
+            a.ref_category_code,
+            b.orderable_status,
+            b.menu_code,
+            b.menu_name,
+            b.menu_price
+
+        from
+            tbl_category a
+        join
+            tbl_menu b on (b.category_code = a.category_code)
+
+    </select>
+
+
+
+
+    <delete id="deleteMenuByCode" parameterType="int">
+        delete
+            from tbl_menu
+        where menu_code = #{ code }
+    </delete>
+
+
+
 
 </mapper>
